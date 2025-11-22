@@ -1,0 +1,5 @@
+https://github.com/maheshsabnis/Blazor_QuickGrid
+11/01/2025
+
+Prompts
+I am in Cairns in a Caravan. I am planning an itinerary for a road trip from Cairns to Brisbane. I want to limit each days travel to 300 klms maximum. There are 2 places I want to have a stayover and they are Airlie Beach and Yeppoon areas. Mostly I want to use free camps. Also they must be dog friendly.

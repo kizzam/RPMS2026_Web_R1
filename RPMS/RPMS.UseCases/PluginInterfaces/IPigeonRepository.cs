@@ -11,6 +11,7 @@ namespace RPMS.UseCases.PluginInterfaces
 
     {
         Task AddPigeonAsync(Pigeon pigeon);
+        Task<bool> ExistsAsync(Pigeon pigeon);
         Task<IEnumerable<Pigeon>> GetPigeonsByRingNoAsync(string ringno);
 
     }
