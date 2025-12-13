@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="RPMS2026_WebApp/RPMS2026_WebApp.Client/RPMS2026_WebApp.Client.csproj" />
+  <Project Path="RPMS2026_WebApp/RPMS2026_WebApp/RPMS2026_WebApp.csproj" />
+</Solution>
