@@ -1,0 +1,28 @@
+﻿@page "/bloodlines"
+
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+
+@attribute [StreamRendering]
+
+<PageTitle>Bloodlines</PageTitle>
+
+<h1>Birds Bloodline</h1>
+<p>This component demonstrates showing data.</p>
+<h3>Bloodlines</h3>
+
+<SfGrid TValue="Bloodlines">
+    <SfDataManager Url="api/bloodlines" Adaptor="Adaptors.BlazorAdaptor"></SfDataManager>
+    <GridColumns>
+        <GridColumn Field="Id" HeaderText="ID" Width="100" TextAlign="TextAlign.Center"></GridColumn>
+        <GridColumn Field="Code" HeaderText="Code" Width="50"></GridColumn>
+        <GridColumn Field="Desc" HeaderText="Name" Width="150"></GridColumn>
+        <GridColumn Field="Type" HeaderText="Type" Width="25"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+
+@code {
+
+}
