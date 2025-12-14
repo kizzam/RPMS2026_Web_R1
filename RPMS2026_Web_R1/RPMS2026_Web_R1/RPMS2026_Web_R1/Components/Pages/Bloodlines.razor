@@ -1,9 +1,12 @@
 ﻿@page "/bloodlines"
+@rendermode InteractiveServer
 
+@using RPMS2026_Web_R1.Data
+@using RPMS2026_Web_R1.DTOs
 @using Syncfusion.Blazor.Data
 @using Syncfusion.Blazor.Grids
-
-@attribute [StreamRendering]
+@using Microsoft.EntityFrameworkCore
+@inject Rpms2026WebContext DbContext
 
 <PageTitle>Bloodlines</PageTitle>
 
@@ -11,18 +14,35 @@
 <p>This component demonstrates showing data.</p>
 <h3>Bloodlines</h3>
 
-<SfGrid TValue="Bloodlines">
-    <SfDataManager Url="api/bloodlines" Adaptor="Adaptors.BlazorAdaptor"></SfDataManager>
-    <GridColumns>
-        <GridColumn Field="Id" HeaderText="ID" Width="100" TextAlign="TextAlign.Center"></GridColumn>
-        <GridColumn Field="Code" HeaderText="Code" Width="50"></GridColumn>
-        <GridColumn Field="Desc" HeaderText="Name" Width="150"></GridColumn>
-        <GridColumn Field="Type" HeaderText="Type" Width="25"></GridColumn>
-    </GridColumns>
-</SfGrid>
-
+@if (dataSource != null)
+{
+    <SfGrid DataSource="@dataSource" AllowPaging="true" AllowSorting="true">
+        <GridPageSettings PageSize="12"></GridPageSettings>
+        <GridColumns>
+            <GridColumn Field="Id" HeaderText="ID" IsPrimaryKey="true" Width="100" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field="Code" HeaderText="Code" Width="150"></GridColumn>
+            <GridColumn Field="Desc" HeaderText="Description" Width="200"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
 
 
 @code {
+    private List<BloodlineDTO>? dataSource;
 
+    protected override async Task OnInitializedAsync()
+    {
+        dataSource = await DbContext.Bloodlines
+            .Select(b => new BloodlineDTO
+            {
+                Id = b.Id,
+                Code = b.Code,
+                Desc = b.Desc
+            })
+            .ToListAsync();
+    }
 }

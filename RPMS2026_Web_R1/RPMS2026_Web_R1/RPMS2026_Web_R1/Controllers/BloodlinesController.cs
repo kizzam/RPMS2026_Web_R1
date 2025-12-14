@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RPMS2026_Web_R1.Data;
+using RPMS2026_Web_R1.DTOs;
 
 namespace RPMS2026_Web_R1.Controllers
 {
@@ -15,13 +17,57 @@ namespace RPMS2026_Web_R1.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        // GET: api/bloodline
+        //[HttpGet]
+       // public async Task<ActionResult<IEnumerable<Bloodline>>> GetBloodlines()
+       // {
+       //     var items = await _context.Bloodlines
+         //       .OrderBy(b => b.Desc) // optional
+         //       .ToListAsync();
 
-        public object Get()
+         //   return Ok(items);
+        //}
+
+        [HttpGet]
+        public async Task<ActionResult> GetBloodlines()
         {
-            return new { Items = _context.Bloodlines.ToList() };
-            //return new { Items = _context.Bloodlines, Count = _context.Bloodlines.Count() };
+            var queryString = Request.Query;
+            
+            var skip = queryString.ContainsKey("$skip") ? int.Parse(queryString["$skip"]) : 0;
+            var take = queryString.ContainsKey("$top") ? int.Parse(queryString["$top"]) : 12;
+            
+            var query = _context.Bloodlines.AsQueryable();
+            
+            var totalCount = await query.CountAsync();
+            
+            var items = await query
+                .Skip(skip)
+                .Take(take)
+                .Select(b => new BloodlineDTO
+                {
+                    Id = b.Id,
+                    Code = b.Code,
+                    Desc = b.Desc
+                })
+                .ToListAsync();
+
+            return Ok(new { result = items, count = totalCount });
         }
+
+
+        //[HttpGet]
+
+        //public async Task<ActionResult<IEnumerable<Bloodline>>> GetByCode(string code)
+        //{
+        //var bloodlines = await _context.Bloodlines.ToList;
+        //return Ok(bloodlines);
+        // }
+
+        //public object GetBloodlines()
+        //{
+        //  return GetBloodlines new{ Items = _context.Bloodlines.ToList() };
+        //return new { Items = _context.Bloodlines, Count = _context.Bloodlines.Count() };
+        //}
 
         [HttpPost]
 

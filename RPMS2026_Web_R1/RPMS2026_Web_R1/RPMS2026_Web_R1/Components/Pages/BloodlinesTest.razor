@@ -1,0 +1,83 @@
+@page "/bloodlines-test"
+@rendermode InteractiveServer
+@using RPMS2026_Web_R1.Data
+@using RPMS2026_Web_R1.DTOs
+@using Microsoft.EntityFrameworkCore
+@inject Rpms2026WebContext DbContext
+
+<PageTitle>Bloodlines Test</PageTitle>
+
+<h1>Bloodlines Test - Simple HTML Display</h1>
+<p><a href="/bloodlines">Back to Syncfusion Grid</a></p>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger">
+        <strong>Error:</strong> @errorMessage
+    </div>
+}
+else if (bloodlines != null && bloodlines.Any())
+{
+    <div class="alert alert-success">
+        <strong>Success!</strong> Loaded @bloodlines.Count records from the database.
+    </div>
+    
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bloodline in bloodlines)
+            {
+                <tr>
+                    <td>@bloodline.Id</td>
+                    <td>@bloodline.Code</td>
+                    <td>@bloodline.Desc</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">
+        <p>No bloodlines found in the database.</p>
+    </div>
+}
+
+@code {
+    private List<BloodlineDTO>? bloodlines;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            bloodlines = await DbContext.Bloodlines
+                .Select(b => new BloodlineDTO
+                {
+                    Id = b.Id,
+                    Code = b.Code,
+                    Desc = b.Desc
+                })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load bloodlines: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

@@ -58,3 +58,39 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* Syncfusion Grid Fixes */
+.e-grid {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}
+
+.e-grid .e-pager {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    padding: 10px !important;
+    min-height: 50px !important;
+}
+
+.e-grid .e-pagercontainer {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 5px !important;
+}
+
+.e-grid .e-pagerdropdown {
+    margin: 0 5px !important;
+}
+
+.e-grid .e-pagercontainer .e-numericitem,
+.e-grid .e-pagercontainer .e-spacing {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 2px !important;
+}
+
+/* Fix for icon fonts if not loading properly */
+.e-grid .e-icon::before {
+    font-family: 'e-icons' !important;
+}

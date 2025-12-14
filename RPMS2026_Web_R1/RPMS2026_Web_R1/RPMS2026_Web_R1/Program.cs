@@ -4,11 +4,19 @@ using RPMS2026_Web_R1.Components;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Data;
+using Syncfusion.Licensing;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register Syncfusion license key
+SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cWWdCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWH1fdHRURWlYU0J+XkdWYUo=");
+
 // Register Syncfusion Blazor services
 builder.Services.AddSyncfusionBlazor();
+
+// Register HttpClient for server-side Blazor
+builder.Services.AddHttpClient();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -18,7 +26,22 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<RPMS2026_Web_R1.Data.Rpms2026WebContext>(option=>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("RPMS2026_Web")));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -35,6 +58,8 @@ else
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAntiforgery();
 
