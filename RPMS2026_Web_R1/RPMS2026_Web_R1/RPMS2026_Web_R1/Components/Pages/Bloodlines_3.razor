@@ -1,0 +1,527 @@
+﻿@page "/bloodlines_3"
+
+@rendermode InteractiveServer
+
+@using RPMS2026_Web_R1.Data
+@using RPMS2026_Web_R1.DTOs
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Notifications
+@using Microsoft.EntityFrameworkCore
+@using System.Text
+
+
+@inject Rpms2026WebContext DbContext
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Maintenance - Bloodlines Reference File</PageTitle>
+
+<h1>Maintenance</h1>
+
+@if (dataSource != null)
+{
+    <SfGrid @ref="Grid" Caption="Master List of Bird Bloodlines"
+            DataSource="@dataSource"
+            AllowPaging="true"
+            AllowSorting="true"
+            AllowFiltering="true"
+            AllowExcelExport="true"
+            AllowPdfExport="true"
+            AllowCsvExport="true"
+            Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel", "PDF Export", "Excel Export", "CSV Export", "Print Page" })"
+            Height="400"
+            ContextMenuItems="@(new List<object>() { "Copy", "PdfExport", "ExcelExport" })"
+            OnPdfExport="OnPdfExport"
+            OnExcelExport="OnExcelExport">
+
+        <GridEvents TValue="Bloodline_ALLDTO"
+                    OnActionBegin="ActionBeginHandler"
+                    OnActionComplete="ActionCompleteHandler"
+                    OnToolbarClick="ToolbarClickHandler">
+        </GridEvents>
+
+        <GridPageSettings PageSize="11"></GridPageSettings>
+
+        <GridEditSettings AllowAdding="true"
+                          AllowEditing="true"
+                          AllowDeleting="true"
+                          Mode="EditMode.Dialog">
+        </GridEditSettings>
+
+        <GridColumns>
+            <GridColumn Field="Id" HeaderText="ID" IsPrimaryKey="true" IsIdentity="true" Width="0" TextAlign="TextAlign.Center"></GridColumn>
+            <GridColumn Field="Code" HeaderText="Code" ValidationRules="@(new ValidationRules { Required = true, MinLength = 1, MaxLength = 5 })" AllowEditing="false" Width="45"></GridColumn>
+            <GridColumn Field="Desc" HeaderText="Description" ValidationRules="@(new ValidationRules { Required = true, MinLength = 3, MaxLength = 30 })" Width="180"></GridColumn>
+            <GridColumn Field="Type" HeaderText="Type" Width="90" ValidationRules="@(new ValidationRules { Required = false, MaxLength = 12 })"></GridColumn>
+            <GridColumn Field="Status" HeaderText="Status" Width="0" ValidationRules="@(new ValidationRules { Required = false, MaxLength = 1 })" TextAlign="TextAlign.Center" AllowEditing="false" AllowAdding="false"></GridColumn>
+            <GridColumn Field="BirdCount" HeaderText="No.Birds in Bloodline" Width="60" TextAlign="TextAlign.Center" AllowEditing="false" AllowAdding="false"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">
+        @errorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success mt-3">
+        @successMessage
+    </div>
+}
+
+<SfDialog @ref="ConfirmDialog"
+          Width="450px"
+          IsModal="true"
+          Visible="false"
+          ShowCloseIcon="true">
+    <DialogTemplates>
+        <Header>Confirm Delete</Header>
+        <Content>
+            @if (pendingDeleteData != null)
+            {
+                @if (pendingDeleteData.BirdCount > 0)
+                {
+                    <div class="alert alert-danger">
+                        <h5>❌ Cannot Delete Bloodline</h5>
+                        <p><strong>This bloodline cannot be deleted because there are @pendingDeleteData.BirdCount bird(s) associated with it.</strong></p>
+                        <hr />
+                        <p><strong>Code:</strong> @pendingDeleteData.Code</p>
+                        <p><strong>Description:</strong> @pendingDeleteData.Desc</p>
+                        <hr />
+                        <p class="mb-0"><small>To delete this bloodline, you must first remove or reassign all birds that reference it.</small></p>
+                    </div>
+                }
+                else
+                {
+                    <p>Are you sure you want to delete this bloodline?</p>
+                    <p><strong>Code:</strong> @pendingDeleteData.Code</p>
+                    <p><strong>Description:</strong> @pendingDeleteData.Desc</p>
+                    <p class="text-success"><strong>✓ No birds are associated with this bloodline hence, OK to Delete.</strong></p>
+                }
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        @if (pendingDeleteData?.BirdCount == 0)
+        {
+            <DialogButton Content="Delete" IsPrimary="true" OnClick="@ConfirmDelete" />
+        }
+        <DialogButton Content="@(pendingDeleteData?.BirdCount > 0 ? "OK" : "Cancel")" OnClick="@CancelDelete" />
+    </DialogButtons>
+</SfDialog>
+
+<SfToast @ref="ToastObj" ShowCloseButton="true" Target="body" Timeout="5000">
+    <ToastPosition X="Right" Y="Top"></ToastPosition>
+</SfToast>
+
+@code {
+    private SfGrid<Bloodline_ALLDTO>? Grid;
+    private SfDialog? ConfirmDialog;
+    private SfToast? ToastObj;
+    private List<Bloodline_ALLDTO>? dataSource;
+    private string? errorMessage;
+    private string? successMessage;
+    private Bloodline_ALLDTO? pendingDeleteData;
+    private ActionEventArgs<Bloodline_ALLDTO>? pendingDeleteArgs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    // Below code handles the PDF & Excel filenames
+    private void OnPdfExport(PdfExportProperties properties)
+    {
+        var tableName = "Bloodlines";
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmm");
+
+        properties.FileName = $"{tableName}_{timestamp}.pdf";
+        properties.PageOrientation = Syncfusion.Blazor.Grids.PageOrientation.Portrait;
+    }
+
+    private void OnExcelExport(ExcelExportProperties properties)
+    {
+        var tableName = "Bloodlines";
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmm");
+
+        properties.FileName = $"{tableName}_{timestamp}.xlsx";
+    }
+
+    private async Task LoadData()
+    {
+        dataSource = await DbContext.Bloodlines
+            .Select(b => new Bloodline_ALLDTO
+            {
+                Id = b.Id,
+                Code = b.Code,
+                Desc = b.Desc,
+                Type = b.Type,
+                Status = b.Status,
+                BirdCount = DbContext.Birds.Count(bird => bird.IdBloodline == b.Id)
+            })
+            .ToListAsync();
+    }
+
+    private async Task ExportToCSV()
+    {
+        try
+        {
+            if (dataSource == null || !dataSource.Any())
+            {
+                errorMessage = "No data to export.";
+                return;
+            }
+
+            var csv = new StringBuilder();
+
+            // Add header
+            csv.AppendLine("ID,Code,Description,Type,Status,Birds");
+
+            // Add data rows
+            foreach (var item in dataSource)
+            {
+                csv.AppendLine($"{item.Id},{EscapeCsv(item.Code)},{EscapeCsv(item.Desc)},{EscapeCsv(item.Type ?? "")},{EscapeCsv(item.Status ?? "")},{item.BirdCount}");
+            }
+
+            var fileName = $"Bloodlines_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+            var base64 = Convert.ToBase64String(bytes);
+
+            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, "text/csv", base64);
+
+            successMessage = $"Exported {dataSource.Count} bloodlines to {fileName}";
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Export failed: {ex.Message}";
+            successMessage = null;
+        }
+    }
+
+    private string EscapeCsv(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return "";
+
+        if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+        {
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        }
+        return value;
+    }
+
+    private async Task ToolbarClickHandler(ClickEventArgs args)
+    {
+        //If Grid ID is not set, use default "Invoice"
+        var gridId = string.IsNullOrEmpty(Grid?.ID) ? "Bloodline" : Grid.ID;
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmm");
+        var tableName = "Bloodlines";
+
+        //BaseFileName
+        var baseFileName = $"RPMS_{tableName}_{timestamp}";
+
+        if (args.Item.Text == "Print Page")
+        {
+            await PrintGrid();
+        }
+        else if (args.Item.Text == "CSV Export")
+        {
+            await ExportToCSV();
+        }
+        else if (args.Item.Text == "PDF Export")
+        {
+            if (Grid != null)
+            {
+                PdfExportProperties pdfProps = new PdfExportProperties();
+
+                {
+                    // Set custom filename for PDF export
+                    pdfProps.FileName = baseFileName + $".pdf";
+                    pdfProps.PageOrientation = Syncfusion.Blazor.Grids.PageOrientation.Portrait;
+                    List<PdfHeaderFooterContent> HeaderContent = new List<PdfHeaderFooterContent>
+                    {
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Reference File: BLOODLINES", Position = new PdfPosition() { X = 180, Y = 0 }, Style = new PdfContentStyle() { TextBrushColor = "#C25050", FontSize = 16} },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Page No.:", Position = new PdfPosition() { X = 550, Y = 35 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value="$pageNumber", Position = new PdfPosition() { X = 610, Y = 35 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Date:", Position = new PdfPosition() { X = 550, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value= DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), Position = new PdfPosition() { X = 590, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Loft:", Position = new PdfPosition() { X = 10, Y = 35 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 12} },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Loft Name from Table Loft", Position = new PdfPosition() { X = 10, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 8} },
+                    };
+
+                    List<PdfHeaderFooterContent> FooterContent = new List<PdfHeaderFooterContent>
+
+                    {
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value ="The Racing Pigeon Management System - RPMS 2026 V1.0 (C))",  Position = new PdfPosition() { X = 5, Y = 0 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 8 } },
+                        new PdfHeaderFooterContent() { Type = ContentType.Text, Value ="Filename: " + baseFileName + $".pdf",  Position = new PdfPosition() { X = 5, Y = 18 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 8 } },
+                    };
+
+                    PdfHeader Header = new PdfHeader()
+
+                    {
+                        FromTop = 0,
+                        Height = 100,
+                        Contents = HeaderContent
+                    };
+
+                    PdfFooter Footer = new PdfFooter()
+
+                    {
+                        FromBottom = 10,
+                        Height = 50,
+                        Contents = FooterContent
+                    };
+
+                    pdfProps.Header = Header;
+                    pdfProps.Footer = Footer;
+
+                    if (this.Grid != null)
+                        await this.Grid.ExportToPdfAsync(pdfProps);
+                }
+            }
+        }
+        else if (args.Item.Text == "Excel Export")
+        {
+            if (Grid != null)
+            {
+                ExcelExportProperties Props = new ExcelExportProperties();
+
+                // Set custom filename for PDF export
+                Props.FileName = baseFileName + $".xlsx";
+                if (this.Grid != null)
+                    await this.Grid.ExportToExcelAsync(Props);
+
+            }
+        }
+    }
+
+
+    private async Task PrintGrid()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+
+    private async Task ActionBeginHandler(ActionEventArgs<Bloodline_ALLDTO> args)
+    {
+        errorMessage = null;
+        successMessage = null;
+
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+        {
+            // Cancel the delete action and show confirmation dialog
+            args.Cancel = true;
+            pendingDeleteData = args.Data;
+            pendingDeleteArgs = args;
+            await ConfirmDialog!.ShowAsync();
+            return;
+        }
+
+        try
+        {
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+            {
+                if (args.Action == "Add")
+                {
+                    // Check if bloodline code already exists
+                    var existingBloodline = await DbContext.Bloodlines
+                        .FirstOrDefaultAsync(b => b.Code.ToLower() == args.Data.Code.ToLower());
+
+                    if (existingBloodline != null)
+                    {
+                        errorMessage = $"❌ Bloodline code '{args.Data.Code}' already exists. Please use a different code.";
+                        args.Cancel = true;
+                        StateHasChanged();
+
+                        await ToastObj!.ShowAsync(new ToastModel
+                        {
+                            Title = "Validation Error",
+                            Content = $"Bloodline code '{args.Data.Code}' already exists.",
+                            CssClass = "e-toast-danger"
+                        });
+                        return;
+                    }
+
+                    // Add new bloodline
+                    var newBloodline = new Bloodline
+                    {
+                        Code = args.Data.Code,
+                        Desc = args.Data.Desc,
+                        Type = args.Data.Type,
+                        Status = args.Data.Status,
+                        DateModified = DateTime.Now,
+                        DateCreated = DateTime.Now
+                    };
+
+                    DbContext.Bloodlines.Add(newBloodline);
+                    await DbContext.SaveChangesAsync();
+
+                    // Update the DTO with the generated ID and bird count
+                    args.Data.Id = newBloodline.Id;
+                    args.Data.BirdCount = 0;
+
+                    // Set success message immediately
+                    StateHasChanged();
+                    successMessage = $"✓ Bloodline '{args.Data.Code}' added successfully.";
+
+                    await ToastObj!.ShowAsync(new ToastModel
+                    {
+                        Title = "Success",
+                        Content = $"Bloodline '{args.Data.Code}' added successfully.",
+                        CssClass = "e-toast-success"
+                    });
+                }
+                else if (args.Action == "Edit")
+                {
+                    // Update existing bloodline
+                    var bloodline = await DbContext.Bloodlines.FindAsync(args.Data.Id);
+                    if (bloodline != null)
+                    {
+                        bloodline.Code = args.Data.Code;
+                        bloodline.Desc = args.Data.Desc;
+                        bloodline.Type = args.Data.Type;
+                        bloodline.Status = args.Data.Status;
+                        bloodline.DateModified = DateTime.Now;
+
+                        DbContext.Bloodlines.Update(bloodline);
+                        await DbContext.SaveChangesAsync();
+
+                        // Update bird count in the DTO
+                        args.Data.BirdCount = await DbContext.Birds.CountAsync(bird => bird.IdBloodline == args.Data.Id);
+
+                        // Set success message immediately
+                        StateHasChanged();
+                        successMessage = $"✓ Bloodline '{args.Data.Code}' updated successfully.";
+                        await ToastObj!.ShowAsync(new ToastModel
+                        {
+                            Title = "Success",
+                            Content = $"Bloodline '{args.Data.Code}' updated successfully.",
+                            CssClass = "e-toast-success"
+                        });
+
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+            args.Cancel = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        await ConfirmDialog!.HideAsync();
+
+        if (pendingDeleteData != null)
+        {
+            // Double-check bird count before deletion
+            if (pendingDeleteData.BirdCount > 0)
+            {
+                errorMessage = $"Cannot delete bloodline '{pendingDeleteData.Code}' - {pendingDeleteData.BirdCount} bird(s) are still associated with this Bloodline.";
+                pendingDeleteData = null;
+                pendingDeleteArgs = null;
+                return;
+            }
+
+            try
+            {
+                var bloodline = await DbContext.Bloodlines.FindAsync(pendingDeleteData.Id);
+                if (bloodline != null)
+                {
+                    // Final check in database to ensure referential integrity
+                    var birdCount = await DbContext.Birds.CountAsync(b => b.IdBloodline == pendingDeleteData.Id);
+                    if (birdCount > 0)
+                    {
+                        errorMessage = $"Cannot delete bloodline '{pendingDeleteData.Code}' - {birdCount} bird(s) are still associated with it.";
+                        pendingDeleteData = null;
+                        pendingDeleteArgs = null;
+                        return;
+                    }
+
+                    DbContext.Bloodlines.Remove(bloodline);
+                    await DbContext.SaveChangesAsync();
+
+                    // Remove from local data source and refresh grid
+                    dataSource?.Remove(pendingDeleteData);
+                    await Grid!.Refresh();
+
+                    successMessage = $"Bloodline '{pendingDeleteData.Code}' deleted successfully.";
+
+                    await ToastObj!.ShowAsync(new ToastModel
+                    {
+                        Title = "Success",
+                        Content = $"Bloodline '{pendingDeleteData.Code}' deleted successfully.",
+                        CssClass = "e-toast-success"
+                    });
+
+                    StateHasChanged();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Error deleting bloodline: {ex.Message}";
+            }
+            finally
+            {
+                pendingDeleteData = null;
+                pendingDeleteArgs = null;
+            }
+        }
+    }
+
+    private async Task CancelDelete()
+    {
+        await ConfirmDialog!.HideAsync();
+        pendingDeleteData = null;
+        pendingDeleteArgs = null;
+    }
+
+    private async Task ActionCompleteHandler(ActionEventArgs<Bloodline_ALLDTO> args)
+    {
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            // Reload data after successful save
+            await LoadData();
+
+            // Navigate to the saved record (works for both Add and Edit)
+            if (args.Data != null)
+            {
+                // Small delay to ensure grid has refreshed
+                await Task.Delay(100);
+
+                // Find the record
+                var recordIndex = dataSource?.FindIndex(b => b.Id == args.Data.Id) ?? -1;
+
+                if (recordIndex >= 0)
+                {
+                    // Calculate page number
+                    var pageSize = 10;
+                    var pageNumber = (recordIndex / pageSize) + 1;
+
+                    // Navigate to that page
+                    await Grid!.GoToPageAsync(pageNumber);
+
+                    // Small delay before selecting
+                    await Task.Delay(100);
+
+                    // Highlight the row
+                    await Grid!.SelectRowAsync(recordIndex);
+                }
+            }
+        }
+    }
+}

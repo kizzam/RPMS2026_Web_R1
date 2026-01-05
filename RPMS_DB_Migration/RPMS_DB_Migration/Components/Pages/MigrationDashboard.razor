@@ -1,0 +1,53 @@
+﻿@page "/migration-dashboard"
+
+@inject RPMS_DB_Migration.Services.MigrationService MigrationService
+@inject RPMS_DB_Migration.Services.AccessReaderService AccessReaderService
+
+<h3>Migration Dashboard</h3>
+
+<button class="btn btn-primary" @onclick="ExtractAndCreateTables">Extract & Create Tables</button>
+<button class="btn btn-success" @onclick="MigrateData">Migrate Data</button>
+<button class="btn btn-warning" @onclick="AddIdsAndRelationships">Add IDs & Relationships</button>
+<button class="btn btn-primary" @onclick="ListTables">List Tables</button>
+
+<hr />
+
+<h4>Status Log</h4>
+<ul>
+    @foreach (var log in StatusLogs)
+    {
+        <li>@log</li>
+    }
+</ul>
+
+@code {
+    private List<string> StatusLogs = new();
+    private List<string>? Tables;
+
+    private async Task ExtractAndCreateTables()
+    {
+        StatusLogs.Add("Starting schema extraction...");
+        await MigrationService.ExtractSchemaAsync();
+        StatusLogs.Add("Schema extraction complete.");
+    }
+
+    private async Task MigrateData()
+    {
+        StatusLogs.Add("Starting data migration...");
+        await MigrationService.MigrateDataAsync();
+        StatusLogs.Add("Data migration complete.");
+    }
+
+    private async Task AddIdsAndRelationships()
+    {
+        StatusLogs.Add("Adding IDs...");
+        await MigrationService.AddIdsAsync();
+        StatusLogs.Add("IDs added.");
+    }
+    private async Task ListTables()
+    {
+        StatusLogs.Add("List Tables...");
+        Tables = await AccessReaderService.GetTablesAsync();
+        StatusLogs.Add("Tables Listed.");
+    }
+}

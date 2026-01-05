@@ -1,0 +1,4 @@
+"sexcode","Description"
+"H","Hen"
+"C","Cock"
+"U","--Select-"

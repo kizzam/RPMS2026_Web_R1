@@ -1,0 +1,90 @@
+﻿@page "/tablelistsource"
+
+@inject RPMS_DB_Migration.Services.AccessReaderService AccessReaderService
+
+<h3>MS AccessTable Dashboard</h3>
+
+<button type="button" class="btn btn-primary" @onclick="ListTables">List Tables</button>
+<button type="button" class="btn btn-success" @onclick="ListTableStructure">Show Table Structure</button>
+<button type="button" class="btn btn-warning" @onclick="ListData">List Data</button>
+
+@if (StatusMessage is not null)
+{
+    <p>@StatusMessage</p>
+}
+
+@if (Tables?.Count > 0)
+{
+<p>Tables found.</p>
+}
+
+@if (Tables?.Count > 0)
+{
+    <ul>
+        @foreach (var table in Tables)
+        {
+            <li>@table</li>
+        }
+    </ul>
+}
+else if (Tables != null)
+{
+    <p>No tables found.</p>
+}
+
+
+@code
+{
+    private List<string>? Tables;
+    private string? StatusMessage;
+
+    private async Task ListTables()
+    {
+        StatusMessage = null; 
+        // Runtime platform guard: OleDb only works on Windows.
+        if (!OperatingSystem.IsWindows())
+        {
+            Tables = new List<string>();
+            StatusMessage = "Access reading requires Windows. Move AccessReaderService to a Windows server or run on Windows.";
+            StateHasChanged();
+            return;
+        }
+        else
+        try
+        {
+            StatusMessage = "Loading tables...";
+            StateHasChanged();
+
+            Tables = await AccessReaderService.GetTablesAsync();
+
+            if (Tables != null && Tables.Count == 0)
+                StatusMessage = "No tables returned.";
+            else if (Tables != null)
+                StatusMessage = $"Found {Tables.Count} table(s).";
+        }
+        catch (Exception ex)
+        {
+            // Surface any exception so you can see why the handler may have failed.
+            StatusMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task ListTableStructure()
+    {
+        await Task.CompletedTask;
+        //StatusLogs.Add("Starting schema extraction...");
+        //await MigrationService.ExtractSchemaAsync();
+        //StatusLogs.Add("List Tables complete.");
+    }
+    private async Task ListData()
+    {
+        await Task.CompletedTask;
+        //StatusLogs.Add("Starting schema extraction...");
+        //await MigrationService.ExtractSchemaAsync();
+        //StatusLogs.Add("List Tables complete.");
+    }
+}

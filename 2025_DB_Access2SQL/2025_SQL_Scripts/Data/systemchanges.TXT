@@ -1,0 +1,4 @@
+"SysChgID","SysDBVer","SysAppVer","SysDBVerPrev","SysAppVerPrev","SysTableName","SysColName","SysActivity","SysFieldType","Notes","DateCreate"
+1,"19.0","2015.06.17.1","14.9","2015.06.17.1","Performances","","New Table","","","17/06/2015 11:14:31 AM"
+2,"20.0","2015.07.23.1","15.0","2015.06.17.1","Mappings","","New Table","","","25/07/2015 10:25:12 PM"
+3,"20.0","2015.07.23.1","15.0","2015.06.17.1","Master","Tail","","Char(20","'L'eft, 'C'entre, 'R'ight","27/09/2020 9:38:36 PM"

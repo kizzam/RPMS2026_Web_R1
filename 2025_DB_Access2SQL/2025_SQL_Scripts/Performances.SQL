@@ -1,0 +1,25 @@
+CREATE TABLE [Performances] 
+(   [ID_Perfmance] INTEGER,
+   [yr] SMALLINT,
+   [mark] TEXT(12),
+   [ringNo] TEXT(8),
+   [PerfDate] DATETIME,
+   [FlyerName] TEXT(24),
+   [PntName] TEXT(18),
+   [Dist] INTEGER,
+   [1Pos] INTEGER,
+   [1Desc] TEXT(5),
+   [1NoFlyers] SMALLINT,
+   [1NoBirds] SMALLINT,
+   [2Pos] INTEGER,
+   [2Desc] TEXT(5),
+   [2NoFlyers] SMALLINT,
+   [2NoBirds] SMALLINT,
+   [3Pos] INTEGER,
+   [3Desc] TEXT(5),
+   [3NoFlyers] SMALLINT,
+   [3NoBirds] SMALLINT,
+   [DateCreate] DATETIME,
+   [Status] TEXT(1) 
+
+)

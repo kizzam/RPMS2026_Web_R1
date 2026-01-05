@@ -10,7 +10,7 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register Syncfusion license key
-SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cWWdCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWH1fdHRURWlYU0J+XkdWYUo=");
+SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5edHZVQ2FcWE13WUpWYEs=");
 
 // Register Syncfusion Blazor services
 builder.Services.AddSyncfusionBlazor();

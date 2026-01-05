@@ -1,0 +1,25 @@
+"reldate","code_pnt","code_race","relhrs","relmins","indampm","ClkDate","ClkHrs","ClkMins","ClkSecs","FlyTime","bskdate","reldatet","position","race_notes","race_weather","status","ClubPos","ClubVel","ClubPoints","ClubMinsDarkness","ClubFTime","FedPos","FedVel","FedPoints","FedMinsDarkness","FedFTime","NatPos","IntNatPos","yr","mark","ringno","Spare","Spare1","Code","Spare2","RaceCode","OOClub","OOSec","OOFed","OOComb","OONat","OOINat","BiClub","BiComb","BiFed","BiSec","BiNat","BiINat","BiLoft","RaceStatus","OOLoft","WinVel","Distance"
+"8/06/2013","MOONI","FLOCK",9,0,"True","8/06/2013",11,18,0,2.29999995231628,"","","","Truck arrived 12:55am good trip out.
+Liberation Report: Birds left well.
+My first bird 14 mins ahead next. I missed it arriving was in loft 11:18am","At 8:15am John reported high cloud no surface wind but cloud appeared to be moving from the north west
+Liberation Temp: 11
+Wind NE 10klm at Highfields
+Wind Direction: nil
+Wind Speed: nil","",0,1143.19995117188,,0,,0,,,,,0,0,2012,"HIGHFIELDS","0904","","",,0,2,,,,,,,,,,,,,58,"R",,0,157770.524005
+"15/06/2013","MOONI","FLOCK",8,0,"True","15/06/2013",9,47,6,1.7849999666214,"","","","Truck arrived at 12:10pm after a good trip
+Liberation: Birds left well broke into 3 packs then joined together and headed for home","Birds were liberated at 8:00am 
+
+
+
+Early cloud cleared by 7:00am high cloud moving in at 7:45am wind still north west but will swing to South West strengthening
+Liberation Temp: 10
+Wind Direction: north west
+Wind Speed: 3kph","",7,1473.09997558594,,0,,0,,,,,0,0,2012,"HIGHFIELDS","0886","","",,0,3,,,,,,,,,,,,,54,"R",,0,157770.524005
+"24/05/2014","AUBIG","SB",8,0,"True","",0,0,0,0,"","","","trewtrwe","ytrrew","",,,,0,,,,,,,0,0,,"","","","",,0,4,,,,,,,,,,,,,0,"T",,1234,0
+"26/05/2014","5KT","FLOCK",7,0,"True","",0,0,0,0,"","","","test","test","",,,,0,,,,,,,0,0,,"","","","",,0,5,,,,,,,1,2,3,4,5,6,0,"R",,0,0
+"18/07/2015","MACKA","Natio",7,0,"True","",0,0,0,0,"","","","Birds cleared South in One Pack","At Release 10klm Southerly","",,,,0,,,,,,,0,0,,"","","","",,0,6,,,,,,,,,,,,,0,"R",,0,0
+"18/07/2015","BUNDA","Club",7,0,"True","",0,0,0,0,"","","","","","",,,,0,,,,,,,0,0,,"","","","",,0,7,,,,,,,,,,,,,0,"R",,0,0
+"10/07/2015","MARYB","Club",9,30,"True","",0,0,0,0,"","","","","","",,,,0,,,,,,,0,0,,"","","","",,0,8,,,,,,,,,,,,,0,"R",,0,0
+"7/05/2016","JOHND","FLOCK",9,0,"True","7/05/2016",11,29,3,2.48416662216187,"","","","North Release .Transporter arrived at Jondaryan at 11.30 PM.Birds were watered and released at 09.00 AM","Saturday 7 May Jondaryan Min 12 Max 28 Mostly sunny. Slight (20%) chance of a shower. Winds east to northeasterly 15 to 25 km/h. Overnight temperatures falling to between 11 and 14 with daytime temperatures reaching the mid to high 20s. Brisbane Min 16 Max 27 Slight (30%) chance of a shower in the morning. Mostly sunny afternoon. Light winds","",10,912.440002441406,,0,,0,,,,,0,0,2014,"QPF","3312","","",,0,9,12,20,,,,,299,,,474,,,30,"R",,1083.40002441406,135999.633005
+"14/05/2016","DALBY","FLOCK",8,30,"True","14/05/2016",10,54,23,2.40638899803162,"","","","Transporter arrived at Dalby at 11.50 pm.Bids were watered this morning and were released at 08.30 am.When released broke into 2 packs , 1 headed south east , 1 north east Gone in 10 minutes. No wind at time of release. Clear blue sky","Dalby 14 May Min 8 Max 26 Sunny. Light winds. Brisbane Min 14 Max 27 Partly cloudy. Light winds","",1,1170.5,,0,,0,,,,,0,0,2014,"QPF","3322","","",,0,10,12,22,,,,,270,,,520,,,19,"R",,1152.16003417969,169007.055005
+"21/05/2016","DALBY","FLOCK",8,30,"True","21/05/2016",11,52,31,3.37527775764465,"","","","Transporter arrived at Dalby 11.45 pm. Birds were watered and released at 08.30 am. When released broke into two packs 1 pack went north and 1 pack went east all left in 8 minutes","Dalby Saturday 21 May Min 9 Max 27 Partly cloudy. Winds east to northeasterly 15 to 25 km/h becoming light during the day. Brisbane area Min 15 Max 27 Partly cloudy. Cloudy. Light winds.","",4,821.299987792969,,0,,0,,,,,0,0,2015,"QPF","7016","","",,0,11,13,21,,,,,261,,,432,,,15,"R",,913.370971679688,0

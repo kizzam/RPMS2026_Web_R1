@@ -1,0 +1,28 @@
+CREATE TABLE [points] 
+(   [code_pnt] TEXT(5),
+   [pntname] TEXT(18),
+   [State] TEXT(3),
+   [lat_deg] SMALLINT,
+   [lat_min] SMALLINT,
+   [lat_sec] FLOAT,
+   [lng_deg] SMALLINT,
+   [lng_min] SMALLINT,
+   [lng_sec] FLOAT,
+   [series] TEXT(16),
+   [DistSpec] FLOAT,
+   [DistCalcGCM_TDPF] FLOAT,
+   [DistCalcGCM_UK] FLOAT,
+   [DistCalcGCM_Intl] FLOAT,
+   [DistCalcGEOD] FLOAT,
+   [DistGen] FLOAT,
+   [notes] TEXT(24),
+   [system] YESNO,
+   [MyPoint] TEXT(1),
+   [Club] TEXT(16),
+   [DistCalcGCM_TDPFyds] FLOAT,
+   [DistCalcGCM_UKyds] FLOAT,
+   [DistCalcGCM_Intlyds] FLOAT,
+   [DistCalcGEODyds] FLOAT,
+   [DistType] TEXT(1) 
+
+)

@@ -1,0 +1,4 @@
+"code","desc","status","system"
+"NA","Not Available","","True"
+"OUT","Birds Loaned Out","","False"
+"IN","Birds Borrowed","","False"

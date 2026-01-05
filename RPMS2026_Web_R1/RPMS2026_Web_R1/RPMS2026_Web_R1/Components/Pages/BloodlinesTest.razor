@@ -41,6 +41,9 @@ else if (bloodlines != null && bloodlines.Any())
                     <td>@bloodline.Id</td>
                     <td>@bloodline.Code</td>
                     <td>@bloodline.Desc</td>
+                    <td>@bloodline.Type</td>
+                    <td>@bloodline.Status</td>
+
                 </tr>
             }
         </tbody>
@@ -54,7 +57,7 @@ else
 }
 
 @code {
-    private List<BloodlineDTO>? bloodlines;
+    private List<Bloodline_ALLDTO>? bloodlines;
     private bool isLoading = true;
     private string? errorMessage;
 
@@ -63,7 +66,7 @@ else
         try
         {
             bloodlines = await DbContext.Bloodlines
-                .Select(b => new BloodlineDTO
+                .Select(b => new Bloodline_ALLDTO
                 {
                     Id = b.Id,
                     Code = b.Code,

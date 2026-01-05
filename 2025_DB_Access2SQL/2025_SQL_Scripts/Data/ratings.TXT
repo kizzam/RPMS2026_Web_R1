@@ -1,0 +1,17 @@
+"CodeRating","RatingDesc","Status","Code","System","Desc","Level"
+"","","A","F3","True","Fed Top 20",65
+"","","A","C1","True","Club Top 5",60
+"","","A","IW","True","Inter Nat Win",100
+"","","A","F1","True","Fed Top 5",80
+"","","A","F2","True","Fed Top 10",75
+"","","A","FW","True","Federation Win",90
+"","","A","S2","True","Section Top 10",70
+"","","A","CW","True","Club Win",78
+"","","A","NW","True","National Win",95
+"","","A","CB","True","Clock Bird",5
+"","","A","SW","True","Section Win",85
+"","","A","S1","True","Section Top 5",75
+"","","A","LO","True","Lost",1
+"","","A","HO","True","Homed",15
+"","","A","IN","True","Homed Injured",18
+"","","A","DL","True","Homed Late",5

@@ -43,11 +43,14 @@ namespace RPMS2026_Web_R1.Controllers
             var items = await query
                 .Skip(skip)
                 .Take(take)
-                .Select(b => new BloodlineDTO
+                .Select(b => new Bloodline_ALLDTO
                 {
                     Id = b.Id,
                     Code = b.Code,
-                    Desc = b.Desc
+                    Desc = b.Desc,
+                    Type = b.Type,
+                    Status = b.Status,
+                    BirdCount = _context.Birds.Count(bird => bird.IdBloodline == b.Id)
                 })
                 .ToListAsync();
 
