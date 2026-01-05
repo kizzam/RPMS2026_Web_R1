@@ -151,21 +151,22 @@ else
         properties.PageSize = PdfPageSize.A4;
         properties.IsRepeatHeader = true;
         properties.ExportType=ExportType.AllPages;
+       // properties.PdfPageNumberType = PdfPageNumberType.Numeric;
+
 
         // Calculate aggregation totals
         var totalBloodlines = dataSource?.Count ?? 0;
         var totalBirdCount = dataSource?.Sum(b => b.BirdCount) ?? 0;
-        //pageno = ContentType.PageNumber;
-
-
 
         // Add Header Content
         List<PdfHeaderFooterContent> HeaderContent = new List<PdfHeaderFooterContent>
         {
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Reference File: BLOODLINES", Position = new PdfPosition() { X = 180, Y = 0 }, Style = new PdfContentStyle() { TextBrushColor = "#C25050", FontSize = 16} },
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Page:", Position = new PdfPosition() { X = 500, Y = 35 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
-            new PdfHeaderFooterContent() { Type = ContentType.PageNumber, Format = "Page {0}", Position = new PdfPosition { X = 560, Y = 35 }, Style = new PdfContentStyle { TextBrushColor = "#000000" } },
-            new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Date:", Position = new PdfPosition() { X = 500, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+            //new PdfHeaderFooterContent() { Type = ContentType.PageNumber, Value="CurrentPage {0}", Format = "{0}", Position = new PdfPosition { X = 560, Y = 35 }, Style = new PdfContentStyle { TextBrushColor = "#000000" } },
+            //new PdfHeaderFooterContent() { Type = PdfPageNumberType.Numeric, Value="CurrentPage {0}", Format = "{0}", Position = new PdfPosition { X = 560, Y = 35 }, Style = new PdfContentStyle { TextBrushColor = "#000000" } },
+            new PdfHeaderFooterContent() { Type = ContentType.PageNumber, Format = "{0}", Position = new PdfPosition { X = 560, Y = 35 }, Style = new PdfContentStyle { TextBrushColor = "#000000" } },
+           new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Date:", Position = new PdfPosition() { X = 500, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value= DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), Position = new PdfPosition() { X = 540, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Loft:", Position = new PdfPosition() { X = 10, Y = 35 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 12} },
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Loft Name from Table Loft", Position = new PdfPosition() { X = 10, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 8} }
@@ -179,7 +180,7 @@ else
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value ="Filename: " + baseFileName + ".pdf",  Position = new PdfPosition() { X = 5, Y = 18 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 8 } },
             new PdfHeaderFooterContent() { Type = ContentType.Text, Value ="Produced by 'The Racing Pigeon Management System - RPMS 2026 V1.0 (C) All rights reserved)'",  Position = new PdfPosition() { X = 5, Y = 40 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 8 } }
             //new PdfHeaderFooterContent() { Type = ContentType.PageNumber, Value = "Page {0}", Position = new PdfPosition { X = 25, Y = 15 }, Style = new PdfContentStyle { TextBrushColor = "#000000" } },
-            //new PdfHeaderFooterContent() { Type = ContentType.PageNumber, Value="$pageNumber", Position = new PdfPosition() { X = 45, Y = 15 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} }
+            //new PdfHeaderFooterContent() { Type = ContentType.PageNumber, Value="$pageNumber", Position = new PdfPosition() { X = 45, Y = 15 }, Style = new PdfContentStyle { TextBrushColor = "#000000"} }
          };
 
         PdfHeader Header = new PdfHeader()
@@ -521,3 +522,4 @@ else
         }
     }
 }
+
